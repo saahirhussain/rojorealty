@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>CRM Dashboard</title>
+  <style>
+    body { font-family: Arial; padding: 20px; }
+    .hidden { display: none; }
+    .login { max-width: 300px; margin: auto; margin-top: 100px; text-align: center; }
+    table, th, td { border: 1px solid #ddd; border-collapse: collapse; padding: 8px; }
+  </style>
+</head>
+<body>
+  <div id="login" class="login">
+    <h2>Enter Password to Access CRM</h2>
+    <input type="password" id="passwordInput" placeholder="Enter password" />
+    <br><br>
+    <button onclick="checkPassword()">Submit</button>
+    <p id="error" style="color:red;"></p>
+  </div>
+
+  <div id="crmContent" class="hidden">
+    <h1>CRM Dashboard</h1>
+    <input type="text" id="searchInput" placeholder="Search by client name" />
+    <br><br>
+    <table id="clientsTable">
+      <thead>
+        <tr>
+          <th>Client Name</th>
+          <th>Email</th>
+          <th>Phone</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <script>
+    const correctPassword = "rojorealty";  // CHANGE THIS TO YOUR DESIRED PASSWORD
+
+    function checkPassword() {
+      const input = document.getElementById("passwordInput").value;
+      if (input === correctPassword) {
+        document.getElementById("login").classList.add("hidden");
+        document.getElementById("crmContent").classList.remove("hidden");
+        loadClients();
+      } else {
+        document.getElementById("error").textContent = "Incorrect password.";
+      }
+    }
+
+    function loadClients() {
+      fetch("https://nvp6bw1j38.execute-api.us-east-2.amazonaws.com/clients")
+        .then(response => response.json())
+        .then(data => {
+          const tbody = document.querySelector("#clientsTable tbody");
+          tbody.innerHTML = "";
+          data.forEach(client => {
+            const row = document.createElement("tr");
+            row.innerHTML = `
+              <td>${client.clientName}</td>
+              <td>${client.email}</td>
+              <td>${client.phone}</td>
+            `;
+            tbody.appendChild(row);
+          });
+        })
+        .catch(error => console.error("Error loading clients:", error));
+    }
+
+    // Optional: search filter
+    document.addEventListener("DOMContentLoaded", () => {
+      document.getElementById("searchInput").addEventListener("input", function () {
+        const search = this.value.toLowerCase();
+        document.querySelectorAll("#clientsTable tbody tr").forEach(row => {
+          const name = row.children[0].textContent.toLowerCase();
+          row.style.display = name.includes(search) ? "" : "none";
+        });
+      });
+    });
+  </script>
+</body>
+</html>

@@ -44,7 +44,7 @@
 
   <nav class="bg-black text-white p-4 flex justify-between items-center">
     <h1 class="text-2xl font-bold">Rojo Realty CRM</h1>
-    <a href="index.html" class="hover:text-yellow-400">Back to Website</a>
+    <a href="index1.html" class="hover:text-yellow-400">Back to Website</a>
   </nav>
 
   <section class="min-h-screen py-12 px-4 bg-white bg-opacity-90">
@@ -54,9 +54,10 @@
         <thead class="bg-black text-white">
           <tr>
             <th class="py-2 px-4 text-left">Name</th>
+            <th class="py-2 px-4 text-left">Phone</th>
             <th class="py-2 px-4 text-left">Email</th>
             <th class="py-2 px-4 text-left">Message</th>
-            <th class="py-2 px-4 text-left">Date</th>
+            <th class="py-2 px-4 text-left">Date Created</th>
           </tr>
         </thead>
         <tbody id="client-table" class="text-black">
@@ -66,33 +67,42 @@
     </div>
   </section>
 
-  <script>
-    const slides = document.querySelectorAll(".background-slideshow img");
-    let current = 0;
-    function showNextSlide() {
-      slides[current].classList.remove("active");
-      current = (current + 1) % slides.length;
-      slides[current].classList.add("active");
-    }
-    setInterval(showNextSlide, 5000);
+<script>
+  // Background Slideshow
+  const slides = document.querySelectorAll(".background-slideshow img");
+  let current = 0;
+  function showNextSlide() {
+    slides[current].classList.remove("active");
+    current = (current + 1) % slides.length;
+    slides[current].classList.add("active");
+  }
+  setInterval(showNextSlide, 5000);
 
-    // Example of fetching clients from your API
-    fetch("https://nvp6bw1j38.execute-api.us-east-2.amazonaws.com/clients")
-      .then(res => res.json())
-      .then(data => {
-        const table = document.getElementById("client-table");
-        data.forEach(client => {
-          const row = document.createElement("tr");
-          row.innerHTML = `
-            <td class="py-2 px-4 border-b">${client.name}</td>
-            <td class="py-2 px-4 border-b">${client.email}</td>
-            <td class="py-2 px-4 border-b">${client.message}</td>
-            <td class="py-2 px-4 border-b">${client.date}</td>
-          `;
-          table.appendChild(row);
-        });
-      })
-      .catch(error => console.error("Failed to load clients", error));
-  </script>
+  // Fetch clients from API
+  fetch("https://nvp6bw1j38.execute-api.us-east-2.amazonaws.com/clients")
+    .then(res => res.json())
+    .then(data => {
+      console.log("Fetched data:", data); // Debug output
+      const table = document.getElementById("client-table");
+
+      if (!Array.isArray(data)) {
+        console.error("Expected array but got:", data);
+        return;
+      }
+
+      data.forEach(client => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td class="py-2 px-4 border-b">${client.clientName || ""}</td>
+          <td class="py-2 px-4 border-b">${client.phone || ""}</td>
+          <td class="py-2 px-4 border-b">${client.email || ""}</td>
+          <td class="py-2 px-4 border-b">${client.message || client.notes || ""}</td>
+          <td class="py-2 px-4 border-b">${client.createdAt || ""}</td>
+        `;
+        table.appendChild(row);
+      });
+    })
+    .catch(error => console.error("Failed to load clients", error));
+</script>
 </body>
 </html>

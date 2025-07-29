@@ -1,12 +1,14 @@
-const apiBase = "https://nvp6bw1j38.execute-api.us-east-2.amazonaws.com/"; // replace with your Invoke URL
+const apiBase = "https://nvp6bw1j38.execute-api.us-east-2.amazonaws.com"; // replace with your Invoke URL
 
 document.getElementById("createClientForm").addEventListener("submit", async (e) => {
   e.preventDefault();
 
   const data = {
     clientName: document.getElementById("clientName").value,
+    phone: document.getElementById("phone").value,
     email: document.getElementById("email").value,
-    phone: document.getElementById("phone").value
+    message: document.getElementById("message").value,
+    createdAt: new Date().toISOString()
   };
 
   try {
